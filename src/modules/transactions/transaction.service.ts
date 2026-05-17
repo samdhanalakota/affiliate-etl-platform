@@ -1,6 +1,8 @@
 import { transactionRepository } from "./transaction.repository.js";
 import { Transaction } from "../../entities/Transaction.js";
 import type { CreateTransactionDto } from "./transaction.schema.js";
+import { QueryFailedError } from "typeorm";
+import { ConflictError } from "../../utils/errors";
 
 export class TransactionService {
   /**
@@ -26,10 +28,28 @@ export class TransactionService {
       occurredAt: new Date(dto.occurredAt),
     });
 
-    /**
-     * INSERT into database.
-     */
-    return transactionRepository.save(transaction);
+    try {
+      /**
+       * INSERT into database.
+       */
+      return await transactionRepository.save(transaction);
+    } catch (error) {
+      /**
+       * PostgreSQL unique violation.
+       *
+       * Error code:
+       *
+       * 23505
+       */
+      if (
+        error instanceof QueryFailedError &&
+        (error as any).driverError?.code === "23505"
+      ) {
+        throw new ConflictError("Transaction already exists");
+      }
+
+      throw error;
+    }
   }
 }
 

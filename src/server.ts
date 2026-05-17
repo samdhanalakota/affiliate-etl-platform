@@ -2,11 +2,14 @@ import express from "express";
 import { AppDataSource } from "./data-source";
 import { logger } from "./utils/logger";
 import { env } from "./config/env";
-import { transactionRouter } from "./modules/transactions/transaction.routes.js";
+import { transactionRouter } from "./modules/transactions/transaction.routes";
+import { errorMiddleware }
+  from "./middleware/error.middleware";
 
 const app = express();
 
 app.use(express.json());
+
 
 app.get("/health", (_req, res) => {
   res.json({
@@ -17,6 +20,8 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/transactions", transactionRouter);
+
+app.use(errorMiddleware);
 
 async function bootstrap() {
   try {
