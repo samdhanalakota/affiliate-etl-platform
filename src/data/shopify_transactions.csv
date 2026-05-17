@@ -1,0 +1,5 @@
+transaction_id,partner_name,amount,currency,status,occurred_at
+ORD-1001,Nike,49.99,USD,approved,2026-05-16T10:30:00Z
+ORD-1002,Adidas,89.50,USD,approved,2026-05-16T11:30:00Z
+ORD-1003,Puma,INVALID,USD,approved,2026-05-16T12:30:00Z
+ORD-1004,Reebok,120.25,USD,approved,2026-05-16T13:30:00Z

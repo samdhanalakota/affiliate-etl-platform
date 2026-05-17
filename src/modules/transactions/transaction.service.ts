@@ -1,4 +1,7 @@
-import { transactionRepository } from "./transaction.repository.js";
+import {
+  clearTransactions,
+  transactionRepository,
+} from "./transaction.repository.js";
 import { Transaction } from "../../entities/Transaction.js";
 import type { CreateTransactionDto } from "./transaction.schema.js";
 import { QueryFailedError } from "typeorm";
@@ -50,6 +53,10 @@ export class TransactionService {
 
       throw error;
     }
+  }
+
+  async clearAll(): Promise<void> {
+    await clearTransactions();
   }
 }
 

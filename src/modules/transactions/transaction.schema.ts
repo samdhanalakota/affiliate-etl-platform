@@ -10,7 +10,9 @@ export const createTransactionSchema = z.object({
   // Business partner.
   partnerName: z.string().min(1),
 
-  amount: z.string(),
+  amount: z
+    .string()
+    .regex(/^\d+(\.\d{1,2})?$/, "Amount must be a valid money value"),
 
   currency: z.string().length(3),
 
