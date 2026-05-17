@@ -55,13 +55,21 @@ export async function loadTransactions(
       }),
     );
 
-    // Batch insert
-    const result = await transactionRepository
-      .createQueryBuilder()
-      .insert()
-      .values(entities)
-      .orIgnore()
-      .execute();
+    // Use DB transaction per batch.
+    //  If something fails during this batch,
+    //  Postgres rolls back this batch only
+    //  Previous successful batches remain committed
+    const result = await transactionRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        return transactionalEntityManager
+          .createQueryBuilder()
+          .insert()
+          .into("transactions")
+          .values(entities)
+          .orIgnore()
+          .execute();
+      },
+    );
 
     const batchInserted = result.identifiers.length;
 
